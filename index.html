@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Relógio TRMNL</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 40px;
+    }
+    .periodo {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+    .hora-texto {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    .hora-digital {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="periodo" id="periodo"></div>
+  <div class="hora-texto" id="horaTexto"></div>
+  <div class="hora-digital" id="horaDigital"></div>
+
+  <script>
+    function atualizarRelogio() {
+      const agora = new Date();
+      const horas = agora.getHours();
+      const minutos = agora.getMinutes();
+
+      document.getElementById("horaDigital").innerText =
+        "ou seja: " +
+        String(horas).padStart(2, "0") +
+        "h" +
+        String(minutos).padStart(2, "0");
+
+      // por agora só mostramos isto
+      document.getElementById("periodo").innerText = "RELÓGIO EM CONSTRUÇÃO";
+      document.getElementById("horaTexto").innerText = "em breve por extenso";
+    }
+
+    atualizarRelogio();
+    setInterval(atualizarRelogio, 60000);
+  </script>
+
+</body>
+</html>
