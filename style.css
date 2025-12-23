@@ -1,63 +1,59 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body, html {
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    font-family: sans-serif;
-    overflow: hidden;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body, html { 
+    width: 100%; 
+    height: 100%; 
+    background-color: white; 
+    font-family: sans-serif; 
+    overflow: hidden; 
 }
 
 .screen {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100vw;
 }
 
-/* Bloco do Topo - Fundo Preto, Letras Brancas */
-.header-block {
+/* Faixas Pretas (Topo e Fundo) */
+.black-block {
     background-color: black;
     color: white;
-    height: 35%; /* Ocupa um terço do ecrã */
+    height: 25%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 85px; /* Ajuste conforme necessário */
+    font-size: 70px;
     font-weight: 900;
     text-transform: uppercase;
     text-align: center;
     padding: 20px;
 }
 
-/* Bloco de Baixo - Conteúdo */
+/* Área Central Branca */
 .content-block {
-    height: 65%;
+    height: 50%;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly; /* Distribui o espaço entre as frases */
+    justify-content: center;
     align-items: center;
-    padding: 40px 20px;
-    text-align: center;
+    gap: 20px;
+    padding: 10px;
 }
 
-.main-phrase {
-    font-size: 60px;
+.main-phrase { 
+    font-size: 55px; 
+    text-transform: uppercase; 
+    text-align: center; 
     line-height: 1.1;
-    text-transform: uppercase;
     color: black;
 }
 
-.negrito {
-    font-weight: 900;
-}
+.negrito { font-weight: 900; }
 
-.footer-digital {
-    font-size: 30px;
-    font-style: italic;
+.footer-digital { 
+    font-size: 30px; 
+    font-style: italic; 
     color: black;
 }
+
+/* Letra do Curpio ligeiramente menor se a frase for longa */
+.footer-curpio { font-size: 55px; }
