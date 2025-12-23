@@ -3,22 +3,22 @@ function atualizar() {
     const h24 = agora.getHours();
     const min = agora.getMinutes();
 
-    // 1. SEGMENTO DO DIA
+    // 1. SEGMENTO DO DIA (A frase que vai para o bloco preto)
     let seg = "";
     if (h24 >= 4 && h24 < 7) seg = "É DE MADRUGADA";
     else if (h24 >= 7 && h24 < 13) seg = "É DE MANHÃ";
     else if (h24 >= 13 && h24 < 20) seg = "É DE TARDE";
     else seg = "É DE NOITE";
-    document.getElementById("segmento").innerText = seg;
 
-    // 2. FRASE PRINCIPAL (TABELA)
+    // 2. LÓGICA DA TABELA DE MINUTOS
     let prefixo = "";
     let sufMin = "";
     let hAlvo = h24;
 
+    // Se estiver nos minutos finais (>=53), a referência passa para a hora seguinte
     if (min >= 53) hAlvo = (h24 + 1) % 24;
 
-    // Regras de Minutos
+    // Definição exata dos intervalos da tua tabela
     if (min >= 58 || min <= 2)   { prefixo = "CERCA "; sufMin = ""; }
     else if (min >= 3 && min <= 7)   { prefixo = "QUASE "; sufMin = " E DEZ"; }
     else if (min >= 8 && min <= 12)  { prefixo = "CERCA "; sufMin = " E DEZ"; }
@@ -34,31 +34,40 @@ function atualizar() {
 
     const nomes = ["MEIA-NOITE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE", "MEIO-DIA", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"];
     
-    // Conector DA/DAS
+    // Conector DA / DAS
     let conector = (hAlvo === 0 || hAlvo === 1 || hAlvo === 12 || hAlvo === 13) ? "DA " : "DAS ";
     
-    // Construção da Frase
-    let final = "";
+    // Construção da Frase Principal com o destaque em Negrito
+    let parteDestaque = nomes[hAlvo] + sufMin;
+    let finalHTML = "";
+
     if (prefixo === "QUASE ") {
-        final = "QUASE " + nomes[hAlvo] + sufMin;
+        finalHTML = `QUASE <span class="negrito">${parteDestaque}</span>`;
     } else {
-        final = "CERCA " + conector + nomes[hAlvo] + sufMin;
+        finalHTML = `CERCA ${conector}<span class="negrito">${parteDestaque}</span>`;
     }
 
-    // Se for hora exata, acrescentar período
+    // Adiciona o período (da manhã/tarde...) se for hora exata ou quase a próxima hora
     if (sufMin === "" && hAlvo !== 0 && hAlvo !== 12) {
-        if (hAlvo >= 4 && hAlvo < 7) final += " DA MADRUGADA";
-        else if (hAlvo >= 7 && hAlvo < 13) final += " DA MANHÃ";
-        else if (hAlvo >= 13 && hAlvo < 20) final += " DA TARDE";
-        else final += " DA NOITE";
+        let periodo = "";
+        if (hAlvo >= 4 && hAlvo < 7) periodo = " DA MADRUGADA";
+        else if (hAlvo >= 7 && hAlvo < 13) periodo = " DA MANHÃ";
+        else if (hAlvo >= 13 && hAlvo < 20) periodo = " DA TARDE";
+        else periodo = " DA NOITE";
+        
+        finalHTML = finalHTML.replace('</span>', `${periodo}</span>`);
     }
 
-    document.getElementById("frase-principal").innerText = final;
-
-    // 3. DIGITAL
-    const mDig = min.toString().padStart(2, '0');
-    document.getElementById("digital").innerText = `ou seja, são ${h24}h${mDig}`;
+    // 3. ENTREGA DOS TEXTOS PARA O HTML
+    // Usamos as IDs que definimos no novo index.html: "segmento", "frase-principal" e "digital"
+    document.getElementById("segmento").innerText = seg;
+    document.getElementById("frase-principal").innerHTML = finalHTML;
+    
+    const hDigital = h24.toString().padStart(2, '0');
+    const mDigital = min.toString().padStart(2, '0');
+    document.getElementById("digital").innerText = `ou seja, são ${hDigital}h${mDigital}`;
 }
 
+// Inicia o relógio e atualiza a cada segundo
 setInterval(atualizar, 1000);
 atualizar();
