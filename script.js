@@ -1,83 +1,66 @@
-function horaPorExtenso(h) {
-  if (h === 0) return "MEIA-NOITE";
-  if (h === 12) return "MEIO-DIA";
-
-  const mapa = [
-    "DOZE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO",
-    "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"
-  ];
-  return mapa[h % 12];
-}
-
-function artigoDe(textoHora) {
-  if (textoHora === "UMA") return "DA";
-  if (textoHora === "MEIA-NOITE") return "DA";
-  if (textoHora === "MEIO-DIA") return "DO";
-  return "DAS";
-}
-
-function obterRotulo(h, m) {
-  const blocos = [0, 10, 20, 30, 40, 50];
-  let bloco = 0;
-
-  for (let i = 0; i < blocos.length; i++) {
-    if (m >= blocos[i]) bloco = blocos[i];
-  }
-
-  let horaTexto = horaPorExtenso(h);
-  let textoRotulo =
-    bloco === 0 ? horaTexto : `${horaTexto} E ${bloco}`;
-
-  // transição explícita para hora seguinte
-  if (bloco === 50 && m >= 55) {
-    textoRotulo = horaPorExtenso(h + 1);
-  }
-
-  let tipo = m < bloco + 5 ? "QUASE" : "CERCA";
-
-  return { tipo, textoRotulo };
-}
-
 function atualizarRelogio() {
-  const agora = new Date();
-  const h = agora.getHours();
-  const m = agora.getMinutes();
+    const agora = new Date();
+    const horas = agora.getHours();
+    const minutos = agora.getMinutes();
 
-  /* PERÍODO DO DIA */
-  let periodo = "É DE TARDE";
-  if (h >= 20 || h <= 3) periodo = "É DE NOITE";
-  else if (h >= 4 && h <= 6) periodo = "É DE MADRUGADA";
-  else if (h >= 7 && h <= 12) periodo = "É DE MANHÃ";
+    // 1. Definir Segmento do Dia
+    let segmento = "";
+    if (horas >= 4 && horas < 7) segmento = "MADRUGADA";
+    else if (horas >= 7 && horas < 13) segmento = "MANHÃ";
+    else if (horas >= 13 && horas < 20) segmento = "TARDE";
+    else segmento = "NOITE";
 
-  document.getElementById("periodo").innerText = periodo;
+    document.getElementById("segmento-dia").innerText = segmento;
 
-  /* TEXTO CENTRAL */
-  const { tipo, textoRotulo } = obterRotulo(h, m);
-  const artigo = artigoDe(textoRotulo.split(" ")[0]);
+    // 2. Lógica de Arredondamento e Frase Principal
+    let frasePrincipal = "";
+    let horaReferencia = horas;
+    let minutosArredondados = 0;
 
-  let frase =
-    tipo === "QUASE"
-      ? `SÃO QUASE <span class="hora">${textoRotulo}</span>`
-      : `SÃO CERCA <span class="hora">DE ${artigo} ${textoRotulo}</span>`;
+    // Se estivermos nos minutos finais, a referência passa para a hora seguinte
+    if (minutos >= 53) {
+        horaReferencia = (horas + 1) % 24;
+        minutosArredondados = 0;
+    } else {
+        // Arredonda para o múltiplo de 10 mais próximo (10, 20, 30...)
+        minutosArredondados = Math.round(minutos / 10) * 10;
+    }
 
-  document.getElementById("horaTexto").innerHTML = frase;
+    // Tradução da hora para texto e conectores
+    const nomesHoras = ["MEIA-NOITE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE", "MEIO-DIA", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"];
+    const conectores = (h) => (h === 0 || h === 12 || h === 1 || h === 13) ? "DA" : "DAS";
+    
+    let baseHora = nomesHoras[horaReferencia];
+    let sufixoDia = "";
+    
+    // Adiciona "da manhã/tarde/noite" apenas se for hora exata ou perto disso
+    if (minutosArredondados === 0) {
+        if (horaReferencia > 0 && horaReferencia < 12) sufixoDia = " DA MANHÃ";
+        else if (horaReferencia > 12 && horaReferencia < 20) sufixoDia = " DA TARDE";
+        else if (horaReferencia >= 20 || horaReferencia === 0) sufixoDia = " DA NOITE";
+    }
 
-  document.getElementById("horaDigital").innerText =
-    `ou seja, ${String(h).padStart(2, "0")}h${String(m).padStart(2, "0")}`;
+    // Construção da frase de minutos
+    let textoMinutos = "";
+    if (minutosArredondados === 30) textoMinutos = " E MEIA";
+    else if (minutosArredondados > 0) textoMinutos = ` E ${minutosArredondados}`;
 
-  /* RELÓGIO DE PONTEIROS — CORRIGIDO */
-  const ponteiroMin = document.querySelector(".ponteiro.minutos");
-  const ponteiroHora = document.querySelector(".ponteiro.horas");
+    // Prefixo "Quase" ou "Cerca de"
+    let prefixo = "";
+    const resto = minutos % 10;
+    if (minutos >= 53 && minutos <= 57) prefixo = "QUASE ";
+    else if (minutos >= 58 || minutos <= 2) prefixo = "CERCA " + conectores(horaReferencia) + " ";
+    else if (resto >= 3 && resto <= 7) prefixo = "QUASE ";
+    else prefixo = "CERCA " + conectores(horaReferencia) + " ";
 
-  const anguloMin = m * 6; // 360 / 60
-  const anguloHora = (h % 12) * 30 + m * 0.5; // 360 / 12 + compensação
+    frasePrincipal = `${prefixo}${baseHora}${textoMinutos}${sufixoDia}`;
+    document.getElementById("frase-principal").innerText = frasePrincipal.toUpperCase();
 
-  ponteiroMin.style.transform =
-    `translateY(-50%) rotate(${anguloMin}deg)`;
-
-  ponteiroHora.style.transform =
-    `translateY(-50%) rotate(${anguloHora}deg)`;
+    // 3. Hora Digital (O "Ou seja")
+    const horaDigital = agora.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById("hora-digital").innerText = `ou seja, são ${horaDigital}`;
 }
 
+// Atualiza a cada segundo
+setInterval(atualizarRelogio, 1000);
 atualizarRelogio();
-setInterval(atualizarRelogio, 30000);
