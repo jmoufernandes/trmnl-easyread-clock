@@ -6,7 +6,7 @@ async function carregarFeriados() {
         const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${ano}/PT`);
         const dados = await response.json();
         feriadosPT = dados.map(f => f.date); 
-        feriadosPT.push(`${ano}-11-19`); // Feriado Odivelas
+        feriadosPT.push(`${ano}-11-19`); // Feriado de Odivelas
     } catch (e) {
         console.error("Erro ao carregar feriados");
     }
@@ -44,11 +44,11 @@ async function atualizar() {
     }
     document.getElementById("status-curpio").innerText = msgCurpio;
 
-    // Lógica Período do Dia
+    // Período do Dia (Topo)
     let seg = (h24 >= 4 && h24 < 7) ? "É DE MADRUGADA" : (h24 >= 7 && h24 < 13) ? "É DE MANHÃ" : (h24 >= 13 && h24 < 20) ? "É DE TARDE" : "É DE NOITE";
     document.getElementById("segmento").innerText = seg;
 
-    // Lógica Relógio de Texto
+    // Relógio de Texto (Centro)
     let hAlvo = (min >= 53) ? (h24 + 1) % 24 : h24;
     let prefixo = "", sufMin = "";
 
@@ -75,7 +75,11 @@ async function atualizar() {
     }
 
     document.getElementById("frase-principal").innerHTML = finalHTML;
-    document.getElementById("digital").innerText = `ou seja, são ${h24}h${min.toString().padStart(2, '0')}`;
+
+    // HORA DIGITAL - Agora com o formato HH:MM
+    const hDig = h24.toString().padStart(2, '0');
+    const mDig = min.toString().padStart(2, '0');
+    document.getElementById("digital").innerText = `ou seja, são ${hDig}:${mDig}`;
 }
 
 carregarFeriados().then(() => {
