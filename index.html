@@ -36,7 +36,7 @@ function atualizarRelogio() {
   const horas = agora.getHours();
   const minutos = agora.getMinutes();
 
-  // ---- PERÍODO DO DIA ----
+  // -------- PERÍODO DO DIA --------
   let periodo = "";
 
   if (horas >= 20 || horas <= 3) {
@@ -51,24 +51,50 @@ function atualizarRelogio() {
 
   document.getElementById("periodo").innerText = periodo;
 
-  // ---- HORA POR EXTENSO (SEM MINUTOS) ----
-  let horaTexto = "";
+  // -------- HORA BASE (1–12 / MEIA-NOITE / MEIO-DIA) --------
+  function horaPorExtenso(h) {
+    if (h === 0) return "MEIA-NOITE";
+    if (h === 12) return "MEIO-DIA";
 
-  if (horas === 0) {
-    horaTexto = "MEIA-NOITE";
-  } else if (horas === 12) {
-    horaTexto = "MEIO-DIA";
-  } else {
-    const mapaHoras = [
+    const mapa = [
       "DOZE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO",
       "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"
     ];
-    horaTexto = mapaHoras[horas % 12];
+    return mapa[h % 12];
   }
 
-  document.getElementById("horaTexto").innerText = horaTexto;
+  let horaTexto = horaPorExtenso(horas);
+  let textoFinal = horaTexto;
 
-  // ---- HORA DIGITAL (ÂNCORA) ----
+  // -------- ARREDONDAMENTO DOS MINUTOS --------
+  if (minutos >= 3 && minutos <= 7) {
+    textoFinal = `${horaTexto} E CINCO`;
+  } else if (minutos >= 8 && minutos <= 12) {
+    textoFinal = `${horaTexto} E DEZ`;
+  } else if (minutos >= 13 && minutos <= 17) {
+    textoFinal = `${horaTexto} E UM QUARTO`;
+  } else if (minutos >= 18 && minutos <= 22) {
+    textoFinal = `${horaTexto} E VINTE`;
+  } else if (minutos >= 23 && minutos <= 27) {
+    textoFinal = `${horaTexto} E VINTE E CINCO`;
+  } else if (minutos >= 28 && minutos <= 32) {
+    textoFinal = `${horaTexto} E MEIA`;
+  } else if (minutos >= 33 && minutos <= 37) {
+    textoFinal = `${horaTexto} E TRINTA E CINCO`;
+  } else if (minutos >= 38 && minutos <= 42) {
+    textoFinal = `${horaTexto} E QUARENTA`;
+  } else if (minutos >= 43 && minutos <= 47) {
+    textoFinal = `VINTE PARA ${horaPorExtenso(horas + 1)}`;
+  } else if (minutos >= 48 && minutos <= 52) {
+    textoFinal = `UM QUARTO PARA ${horaPorExtenso(horas + 1)}`;
+  } else if (minutos >= 53 && minutos <= 57) {
+    textoFinal = `DEZ PARA ${horaPorExtenso(horas + 1)}`;
+  }
+  // 58–02 → hora certa (já tratado por defeito)
+
+  document.getElementById("horaTexto").innerText = textoFinal;
+
+  // -------- HORA DIGITAL (ÂNCORA) --------
   document.getElementById("horaDigital").innerText =
     "ou seja: " +
     String(horas).padStart(2, "0") +
