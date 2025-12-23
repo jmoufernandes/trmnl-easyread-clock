@@ -11,24 +11,36 @@ body {
 }
 
 .container {
-    width: 90%;
+    width: 95%;
 }
 
+/* 1ª Frase: Garrafal, Negrito e Sublinhada */
 .segmento {
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.frase {
-    font-size: 60px;
+    font-size: 80px; /* Muito grande */
     font-weight: 900;
-    line-height: 1.2;
+    text-decoration: underline;
     text-transform: uppercase;
+    margin-bottom: 40px;
+    line-height: 1.1;
 }
 
+/* 2ª Frase: Tamanho intermédio */
+.frase {
+    font-size: 45px;
+    font-weight: normal;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    line-height: 1.2;
+}
+
+/* Classe auxiliar para o negrito dentro da 2ª frase */
+.negrito {
+    font-weight: 900;
+}
+
+/* 3ª Frase: Pequena e Itálico */
 .digital {
     font-size: 24px;
-    margin-top: 30px;
+    font-style: italic;
     font-weight: normal;
 }
