@@ -77,7 +77,7 @@ function atualizarRelogio() {
   }
 
   let horaTexto = horaPorExtenso(horas);
-  let textoFinal = `${verboHora(horas)} ${horaTexto}`;
+  let textoFinal = `${verboHora(horas)} ${horaTexto} ${horaTexto === "UMA" ? "HORA" : "HORAS"}`;
 
   // -------- MINUTOS (ARREDONDAMENTO) --------
   if (minutos >= 3 && minutos <= 7) {
