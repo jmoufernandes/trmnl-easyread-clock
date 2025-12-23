@@ -1,47 +1,63 @@
-body {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
     background-color: white;
-    color: black;
     font-family: sans-serif;
+    overflow: hidden;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Bloco do Topo - Fundo Preto, Letras Brancas */
+.header-block {
+    background-color: black;
+    color: white;
+    height: 35%; /* Ocupa um terço do ecrã */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    text-align: center;
-    overflow: hidden; /* Impede barras de scroll no TRMNL */
-}
-
-.container {
-    width: 98vw; /* Usa 98% da largura do ecrã */
-}
-
-/* 1ª Frase: Ocupa o topo com grande destaque */
-.segmento {
-    font-size: 110px; /* Aumentado de 80 para 110 */
+    font-size: 85px; /* Ajuste conforme necessário */
     font-weight: 900;
-    text-decoration: underline;
     text-transform: uppercase;
-    margin-bottom: 20px;
-    line-height: 1;
+    text-align: center;
+    padding: 20px;
 }
 
-/* 2ª Frase: O coração do relógio */
-.frase {
-    font-size: 65px; /* Aumentado de 45 para 65 */
-    font-weight: normal;
-    text-transform: uppercase;
-    margin-bottom: 30px;
+/* Bloco de Baixo - Conteúdo */
+.content-block {
+    height: 65%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly; /* Distribui o espaço entre as frases */
+    align-items: center;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.main-phrase {
+    font-size: 60px;
     line-height: 1.1;
+    text-transform: uppercase;
+    color: black;
 }
 
 .negrito {
     font-weight: 900;
 }
 
-/* 3ª Frase: Fica na base, visível mas discreta */
-.digital {
-    font-size: 35px; /* Aumentado de 24 para 35 */
+.footer-digital {
+    font-size: 30px;
     font-style: italic;
-    font-weight: normal;
-    opacity: 0.8;
+    color: black;
 }
