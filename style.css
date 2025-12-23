@@ -13,47 +13,51 @@ body, html {
     height: 100vh;
 }
 
-/* Faixas Pretas (Topo e Fundo) */
+/* Faixas Pretas - Maximizadas */
 .black-block {
     background-color: black;
     color: white;
-    height: 25%;
+    height: 30%; /* Aumentado para dar mais peso visual */
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 70px;
+    font-size: 100px; /* Letras enormes */
     font-weight: 900;
     text-transform: uppercase;
     text-align: center;
-    padding: 20px;
+    padding: 10px;
+    line-height: 0.9;
 }
 
-/* Área Central Branca */
+/* Área Central - Sem espaços vazios inúteis */
 .content-block {
-    height: 50%;
+    height: 40%; /* O centro agora é mais focado */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 20px;
     padding: 10px;
 }
 
 .main-phrase { 
-    font-size: 55px; 
+    font-size: 80px; /* Quase o dobro do anterior */
+    font-weight: 700;
     text-transform: uppercase; 
     text-align: center; 
-    line-height: 1.1;
+    line-height: 1;
     color: black;
+    margin-bottom: 10px;
 }
 
 .negrito { font-weight: 900; }
 
 .footer-digital { 
-    font-size: 30px; 
+    font-size: 40px; 
     font-style: italic; 
-    color: black;
+    color: #333;
 }
 
-/* Letra do Curpio ligeiramente menor se a frase for longa */
-.footer-curpio { font-size: 55px; }
+/* Ajuste para o Curpio caber se for uma frase longa */
+.footer-curpio { 
+    font-size: 85px; 
+}
