@@ -31,21 +31,36 @@
   <div class="hora-digital" id="horaDigital"></div>
 
   <script>
-    function atualizarRelogio() {
-      const agora = new Date();
-      const horas = agora.getHours();
-      const minutos = agora.getMinutes();
+function atualizarRelogio() {
+  const agora = new Date();
+  const horas = agora.getHours();
+  const minutos = agora.getMinutes();
 
-      document.getElementById("horaDigital").innerText =
-        "ou seja: " +
-        String(horas).padStart(2, "0") +
-        "h" +
-        String(minutos).padStart(2, "0");
+  // ---- PERÍODO DO DIA ----
+  let periodo = "";
 
-      // por agora só mostramos isto
-      document.getElementById("periodo").innerText = "RELÓGIO EM CONSTRUÇÃO";
-      document.getElementById("horaTexto").innerText = "em breve por extenso";
-    }
+  if (horas >= 20 || horas <= 3) {
+    periodo = "É DE NOITE";
+  } else if (horas >= 4 && horas <= 6) {
+    periodo = "É DE MADRUGADA";
+  } else if (horas >= 7 && horas <= 12) {
+    periodo = "É DE MANHÃ";
+  } else {
+    periodo = "É DE TARDE";
+  }
+
+  document.getElementById("periodo").innerText = periodo;
+
+  // ---- HORA DIGITAL (âncora) ----
+  document.getElementById("horaDigital").innerText =
+    "ou seja: " +
+    String(horas).padStart(2, "0") +
+    "h" +
+    String(minutos).padStart(2, "0");
+
+  // ---- TEXTO CENTRAL (temporário) ----
+  document.getElementById("horaTexto").innerText = "—";
+}
 
     atualizarRelogio();
     setInterval(atualizarRelogio, 60000);
