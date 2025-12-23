@@ -2,113 +2,29 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Relógio TRMNL</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 40px;
-    }
-    .periodo {
-      font-size: 48px;
-      font-weight: bold;
-      margin-bottom: 30px;
-    }
-    .hora-texto {
-      font-size: 36px;
-      margin-bottom: 20px;
-    }
-    .hora-digital {
-      font-size: 20px;
-    }
-  </style>
+  <title>Relógio Simples</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="periodo" id="periodo"></div>
-  <div class="hora-texto" id="horaTexto"></div>
-  <div class="hora-digital" id="horaDigital"></div>
+  <div id="container">
 
-  <script>
-function atualizarRelogio() {
-  const agora = new Date();
-  const horas = agora.getHours();
-  const minutos = agora.getMinutes();
+    <div id="periodo">É DE TARDE</div>
 
-  // -------- PERÍODO DO DIA --------
-  let periodo = "";
-  if (horas >= 20 || horas <= 3) {
-    periodo = "É DE NOITE";
-  } else if (horas >= 4 && horas <= 6) {
-    periodo = "É DE MADRUGADA";
-  } else if (horas >= 7 && horas <= 12) {
-    periodo = "É DE MANHÃ";
-  } else {
-    periodo = "É DE TARDE";
-  }
-  document.getElementById("periodo").innerText = periodo;
+    <div id="horaTexto">
+      SÃO CERCA <span class="hora">DAS DUAS E QUARENTA</span>
+    </div>
 
-  // -------- HORA BASE (PALAVRAS) --------
-  function horaPorExtenso(h) {
-    if (h === 0) return "MEIA-NOITE";
-    if (h === 12) return "MEIO-DIA";
+    <div id="horaDigital">ou seja, 14h42</div>
 
-    const mapa = [
-      "DOZE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO",
-      "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"
-    ];
-    return mapa[h % 12];
-  }
+    <div id="analogico">
+      <div class="ponteiro horas"></div>
+      <div class="ponteiro minutos"></div>
+      <div class="centro"></div>
+    </div>
 
-  function verboHora(h) {
-    return horaPorExtenso(h) === "UMA" ? "É" : "SÃO";
-  }
+  </div>
 
-  // -------- MARCO SEGUINTE (10 EM 10) --------
-  function proximoMarco(h, m) {
-    if (m <= 2) return { texto: `${horaPorExtenso(h)}${h === 1 ? " HORA" : " HORAS"}`, tipo: "CERCA" };
-
-    if (m <= 7)  return { texto: `${horaPorExtenso(h)} E DEZ`, tipo: "QUASE" };
-    if (m <= 12) return { texto: `${horaPorExtenso(h)} E DEZ`, tipo: "CERCA" };
-
-    if (m <= 17) return { texto: `${horaPorExtenso(h)} E VINTE`, tipo: "QUASE" };
-    if (m <= 22) return { texto: `${horaPorExtenso(h)} E VINTE`, tipo: "CERCA" };
-
-    if (m <= 27) return { texto: `${horaPorExtenso(h)} E MEIA`, tipo: "QUASE" };
-    if (m <= 32) return { texto: `${horaPorExtenso(h)} E MEIA`, tipo: "CERCA" };
-
-    if (m <= 37) return { texto: `${horaPorExtenso(h)} E QUARENTA`, tipo: "QUASE" };
-    if (m <= 42) return { texto: `${horaPorExtenso(h)} E QUARENTA`, tipo: "CERCA" };
-
-    if (m <= 47) return { texto: `${horaPorExtenso(h)} E CINQUENTA`, tipo: "QUASE" };
-    if (m <= 52) return { texto: `${horaPorExtenso(h)} E CINQUENTA`, tipo: "CERCA" };
-
-    // 53–59 → próxima hora
-    return {
-      texto: `${horaPorExtenso(h + 1)}${horaPorExtenso(h + 1) === "UMA" ? " HORA" : " HORAS"}`,
-      tipo: m <= 57 ? "QUASE" : "CERCA"
-    };
-  }
-
-  const marco = proximoMarco(horas, minutos);
-
-  let textoCentral = `${verboHora(horas)} ${marco.tipo} ${marco.texto}`;
-  document.getElementById("horaTexto").innerText = textoCentral;
-
-  // -------- HORA DIGITAL (ÂNCORA) --------
-  document.getElementById("horaDigital").innerText =
-    "ou seja, " +
-    String(horas).padStart(2, "0") +
-    "h" +
-    String(minutos).padStart(2, "0");
-}
-
-
-
-    atualizarRelogio();
-    setInterval(atualizarRelogio, 60000);
-  </script>
-
+  <script src="script.js"></script>
 </body>
 </html>
