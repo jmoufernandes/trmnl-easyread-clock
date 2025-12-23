@@ -9,11 +9,33 @@ function horaPorExtenso(h) {
   return mapa[h % 12];
 }
 
-function artigoDe(horaTexto) {
-  if (horaTexto === "UMA") return "DA";
-  if (horaTexto === "MEIA-NOITE") return "DA";
-  if (horaTexto === "MEIO-DIA") return "DO";
+function artigoDe(textoHora) {
+  if (textoHora === "UMA") return "DA";
+  if (textoHora === "MEIA-NOITE") return "DA";
+  if (textoHora === "MEIO-DIA") return "DO";
   return "DAS";
+}
+
+function obterRotulo(h, m) {
+  const blocos = [0, 10, 20, 30, 40, 50];
+  let bloco = 0;
+
+  for (let i = 0; i < blocos.length; i++) {
+    if (m >= blocos[i]) bloco = blocos[i];
+  }
+
+  let horaTexto = horaPorExtenso(h);
+  let textoRotulo =
+    bloco === 0 ? horaTexto : `${horaTexto} E ${bloco}`;
+
+  // transição explícita para hora seguinte
+  if (bloco === 50 && m >= 55) {
+    textoRotulo = horaPorExtenso(h + 1);
+  }
+
+  let tipo = m < bloco + 5 ? "QUASE" : "CERCA";
+
+  return { tipo, textoRotulo };
 }
 
 function atualizarRelogio() {
@@ -21,7 +43,7 @@ function atualizarRelogio() {
   const h = agora.getHours();
   const m = agora.getMinutes();
 
-  /* PERÍODO */
+  /* PERÍODO DO DIA */
   let periodo = "É DE TARDE";
   if (h >= 20 || h <= 3) periodo = "É DE NOITE";
   else if (h >= 4 && h <= 6) periodo = "É DE MADRUGADA";
@@ -29,40 +51,32 @@ function atualizarRelogio() {
 
   document.getElementById("periodo").innerText = periodo;
 
-  /* MARCO SEGUINTE */
-  let alvoMin = Math.ceil(m / 10) * 10;
-  let alvoHora = h;
+  /* TEXTO CENTRAL */
+  const { tipo, textoRotulo } = obterRotulo(h, m);
+  const artigo = artigoDe(textoRotulo.split(" ")[0]);
 
-  if (alvoMin === 60) {
-    alvoMin = 0;
-    alvoHora = h + 1;
-  }
+  let frase =
+    tipo === "QUASE"
+      ? `SÃO QUASE <span class="hora">${textoRotulo}</span>`
+      : `SÃO CERCA <span class="hora">DE ${artigo} ${textoRotulo}</span>`;
 
-  const horaTexto = horaPorExtenso(alvoHora);
-  const artigo = artigoDe(horaTexto);
-
-  let aproximacao = m < alvoMin ? "QUASE" : "CERCA";
-
-  let textoHora =
-    alvoMin === 0
-      ? `${horaTexto}`
-      : `${horaTexto} E ${alvoMin}`;
-
-  document.getElementById("horaTexto").innerHTML =
-    `SÃO ${aproximacao} <span class="hora">${artigo} ${textoHora}</span>`;
+  document.getElementById("horaTexto").innerHTML = frase;
 
   document.getElementById("horaDigital").innerText =
     `ou seja, ${String(h).padStart(2, "0")}h${String(m).padStart(2, "0")}`;
 
-  /* RELÓGIO ANALÓGICO */
-  const minDeg = m * 6;
-  const horaDeg = (h % 12) * 30 + m * 0.5;
+  /* RELÓGIO DE PONTEIROS — CORRIGIDO */
+  const ponteiroMin = document.querySelector(".ponteiro.minutos");
+  const ponteiroHora = document.querySelector(".ponteiro.horas");
 
-  document.querySelector(".ponteiro.minutos").style.transform =
-    `rotate(${minDeg}deg)`;
+  const anguloMin = m * 6; // 360 / 60
+  const anguloHora = (h % 12) * 30 + m * 0.5; // 360 / 12 + compensação
 
-  document.querySelector(".ponteiro.horas").style.transform =
-    `rotate(${horaDeg}deg)`;
+  ponteiroMin.style.transform =
+    `translateY(-50%) rotate(${anguloMin}deg)`;
+
+  ponteiroHora.style.transform =
+    `translateY(-50%) rotate(${anguloHora}deg)`;
 }
 
 atualizarRelogio();
