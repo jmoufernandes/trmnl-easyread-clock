@@ -6,7 +6,7 @@ async function carregarFeriados() {
         const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${ano}/PT`);
         const dados = await response.json();
         feriadosPT = dados.map(f => f.date); 
-        feriadosPT.push(`${ano}-11-19`); // Feriado de Odivelas
+        feriadosPT.push(`${ano}-11-19`); 
     } catch (e) {
         console.error("Erro ao carregar feriados");
     }
@@ -29,11 +29,9 @@ async function atualizar() {
 
     const amanha = new Date(agora);
     amanha.setDate(agora.getDate() + 1);
-
     const hojeTem = !isDiaLivre(agora);
     const amanhaTem = !isDiaLivre(amanha);
 
-    // Lógica Curpio
     let msgCurpio = "";
     if (h24 >= 3 && h24 < 7) {
         msgCurpio = hojeTem ? "LOGO HÁ CURPIO" : "HOJE NÃO HÁ CURPIO";
@@ -44,11 +42,9 @@ async function atualizar() {
     }
     document.getElementById("status-curpio").innerText = msgCurpio;
 
-    // Período do Dia (Topo)
     let seg = (h24 >= 4 && h24 < 7) ? "É DE MADRUGADA" : (h24 >= 7 && h24 < 13) ? "É DE MANHÃ" : (h24 >= 13 && h24 < 20) ? "É DE TARDE" : "É DE NOITE";
     document.getElementById("segmento").innerText = seg;
 
-    // Relógio de Texto (Centro)
     let hAlvo = (min >= 53) ? (h24 + 1) % 24 : h24;
     let prefixo = "", sufMin = "";
 
@@ -67,16 +63,23 @@ async function atualizar() {
 
     const nomes = ["MEIA-NOITE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE", "MEIO-DIA", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"];
     let conector = (hAlvo === 0 || hAlvo === 1 || hAlvo === 12 || hAlvo === 13) ? "DA " : "DAS ";
-    let finalHTML = (prefixo === "QUASE ") ? `QUASE <span class="negrito">${nomes[hAlvo]}${sufMin}</span>` : `CERCA ${conector}<span class="negrito">${nomes[hAlvo]}${sufMin}</span>`;
-
+    
+    // --- MUDANÇA AQUI: O prefixo fica fora do <span> de negrito ---
+    let destaque = `${nomes[hAlvo]}${sufMin}`;
+    
     if (sufMin === "" && hAlvo !== 0 && hAlvo !== 12) {
         let p = (hAlvo >= 4 && hAlvo < 7) ? " DA MADRUGADA" : (hAlvo >= 7 && hAlvo < 13) ? " DA MANHÃ" : (hAlvo >= 13 && h24 < 20) ? " DA TARDE" : " DA NOITE";
-        finalHTML = finalHTML.replace('</span>', `${p}</span>`);
+        destaque += p;
+    }
+
+    let finalHTML = "";
+    if (prefixo === "QUASE ") {
+        finalHTML = `QUASE <span class="negrito">${destaque}</span>`;
+    } else {
+        finalHTML = `CERCA ${conector}<span class="negrito">${destaque}</span>`;
     }
 
     document.getElementById("frase-principal").innerHTML = finalHTML;
-
-    // HORA DIGITAL - Agora com o formato HH:MM
     const hDig = h24.toString().padStart(2, '0');
     const mDig = min.toString().padStart(2, '0');
     document.getElementById("digital").innerText = `ou seja, são ${hDig}:${mDig}`;
