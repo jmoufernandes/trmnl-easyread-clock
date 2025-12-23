@@ -38,7 +38,6 @@ function atualizarRelogio() {
 
   // -------- PERÍODO DO DIA --------
   let periodo = "";
-
   if (horas >= 20 || horas <= 3) {
     periodo = "É DE NOITE";
   } else if (horas >= 4 && horas <= 6) {
@@ -48,10 +47,9 @@ function atualizarRelogio() {
   } else {
     periodo = "É DE TARDE";
   }
-
   document.getElementById("periodo").innerText = periodo;
 
-  // -------- HORA BASE --------
+  // -------- HORA BASE (PALAVRAS) --------
   function horaPorExtenso(h) {
     if (h === 0) return "MEIA-NOITE";
     if (h === 12) return "MEIO-DIA";
@@ -63,53 +61,44 @@ function atualizarRelogio() {
     return mapa[h % 12];
   }
 
-  function artigoHora(h) {
-    const texto = horaPorExtenso(h);
-    if (texto === "UMA") return "A UMA";
-    if (texto === "MEIA-NOITE") return "A MEIA-NOITE";
-    if (texto === "MEIO-DIA") return "O MEIO-DIA";
-    return "AS " + texto;
-  }
-
   function verboHora(h) {
-    const texto = horaPorExtenso(h);
-    return texto === "UMA" ? "É" : "SÃO";
+    return horaPorExtenso(h) === "UMA" ? "É" : "SÃO";
   }
 
-  let horaTexto = horaPorExtenso(horas);
-  let textoFinal = `${verboHora(horas)} ${horaTexto} ${horaTexto === "UMA" ? "HORA" : "HORAS"}`;
+  // -------- MARCO SEGUINTE (10 EM 10) --------
+  function proximoMarco(h, m) {
+    if (m <= 2) return { texto: `${horaPorExtenso(h)}${h === 1 ? " HORA" : " HORAS"}`, tipo: "CERCA" };
 
-  // -------- MINUTOS (ARREDONDAMENTO) --------
-  if (minutos >= 3 && minutos <= 7) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E CINCO`;
-  } else if (minutos >= 8 && minutos <= 12) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E DEZ`;
-  } else if (minutos >= 13 && minutos <= 17) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E UM QUARTO`;
-  } else if (minutos >= 18 && minutos <= 22) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E VINTE`;
-  } else if (minutos >= 23 && minutos <= 27) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E VINTE E CINCO`;
-  } else if (minutos >= 28 && minutos <= 32) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E MEIA`;
-  } else if (minutos >= 33 && minutos <= 37) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E TRINTA E CINCO`;
-  } else if (minutos >= 38 && minutos <= 42) {
-    textoFinal = `${verboHora(horas)} ${horaTexto} E QUARENTA`;
-  } else if (minutos >= 43 && minutos <= 47) {
-    textoFinal = `VINTE PARA ${artigoHora(horas + 1)}`;
-  } else if (minutos >= 48 && minutos <= 52) {
-    textoFinal = `UM QUARTO PARA ${artigoHora(horas + 1)}`;
-  } else if (minutos >= 53 && minutos <= 57) {
-    textoFinal = `DEZ PARA ${artigoHora(horas + 1)}`;
+    if (m <= 7)  return { texto: `${horaPorExtenso(h)} E DEZ`, tipo: "QUASE" };
+    if (m <= 12) return { texto: `${horaPorExtenso(h)} E DEZ`, tipo: "CERCA" };
+
+    if (m <= 17) return { texto: `${horaPorExtenso(h)} E VINTE`, tipo: "QUASE" };
+    if (m <= 22) return { texto: `${horaPorExtenso(h)} E VINTE`, tipo: "CERCA" };
+
+    if (m <= 27) return { texto: `${horaPorExtenso(h)} E MEIA`, tipo: "QUASE" };
+    if (m <= 32) return { texto: `${horaPorExtenso(h)} E MEIA`, tipo: "CERCA" };
+
+    if (m <= 37) return { texto: `${horaPorExtenso(h)} E QUARENTA`, tipo: "QUASE" };
+    if (m <= 42) return { texto: `${horaPorExtenso(h)} E QUARENTA`, tipo: "CERCA" };
+
+    if (m <= 47) return { texto: `${horaPorExtenso(h)} E CINQUENTA`, tipo: "QUASE" };
+    if (m <= 52) return { texto: `${horaPorExtenso(h)} E CINQUENTA`, tipo: "CERCA" };
+
+    // 53–59 → próxima hora
+    return {
+      texto: `${horaPorExtenso(h + 1)}${horaPorExtenso(h + 1) === "UMA" ? " HORA" : " HORAS"}`,
+      tipo: m <= 57 ? "QUASE" : "CERCA"
+    };
   }
-  // 58–02 → hora certa
 
-  document.getElementById("horaTexto").innerText = textoFinal;
+  const marco = proximoMarco(horas, minutos);
 
-  // -------- HORA DIGITAL --------
+  let textoCentral = `${verboHora(horas)} ${marco.tipo} ${marco.texto}`;
+  document.getElementById("horaTexto").innerText = textoCentral;
+
+  // -------- HORA DIGITAL (ÂNCORA) --------
   document.getElementById("horaDigital").innerText =
-    "ou seja: " +
+    "ou seja, " +
     String(horas).padStart(2, "0") +
     "h" +
     String(minutos).padStart(2, "0");
