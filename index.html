@@ -51,16 +51,31 @@ function atualizarRelogio() {
 
   document.getElementById("periodo").innerText = periodo;
 
-  // ---- HORA DIGITAL (âncora) ----
+  // ---- HORA POR EXTENSO (SEM MINUTOS) ----
+  let horaTexto = "";
+
+  if (horas === 0) {
+    horaTexto = "MEIA-NOITE";
+  } else if (horas === 12) {
+    horaTexto = "MEIO-DIA";
+  } else {
+    const mapaHoras = [
+      "DOZE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO",
+      "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"
+    ];
+    horaTexto = mapaHoras[horas % 12];
+  }
+
+  document.getElementById("horaTexto").innerText = horaTexto;
+
+  // ---- HORA DIGITAL (ÂNCORA) ----
   document.getElementById("horaDigital").innerText =
     "ou seja: " +
     String(horas).padStart(2, "0") +
     "h" +
     String(minutos).padStart(2, "0");
-
-  // ---- TEXTO CENTRAL (temporário) ----
-  document.getElementById("horaTexto").innerText = "—";
 }
+
 
     atualizarRelogio();
     setInterval(atualizarRelogio, 60000);
