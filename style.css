@@ -13,51 +13,51 @@ body, html {
     height: 100vh;
 }
 
-/* Faixas Pretas - Maximizadas */
+/* Faixas Pretas - Topo e Fundo */
 .black-block {
     background-color: black;
     color: white;
-    height: 30%; /* Aumentado para dar mais peso visual */
+    height: 22%; /* Reduzi de 30% para dar mais ar ao centro */
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 100px; /* Letras enormes */
+    font-size: 65px; /* Reduzi de 100px para não bater nas bordas */
     font-weight: 900;
     text-transform: uppercase;
     text-align: center;
-    padding: 10px;
-    line-height: 0.9;
+    padding: 15px;
+    line-height: 1.1;
 }
 
-/* Área Central - Sem espaços vazios inúteis */
+/* Área Central Branca */
 .content-block {
-    height: 40%; /* O centro agora é mais focado */
+    height: 56%; /* Ganhou mais espaço */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
+    gap: 15px; /* Espaço entre a frase e o relógio digital */
 }
 
 .main-phrase { 
-    font-size: 80px; /* Quase o dobro do anterior */
+    font-size: 60px; /* Reduzi de 80px para evitar sobreposição */
     font-weight: 700;
     text-transform: uppercase; 
     text-align: center; 
-    line-height: 1;
+    line-height: 1.2; /* Aumentei o espaço entre linhas */
     color: black;
-    margin-bottom: 10px;
 }
 
 .negrito { font-weight: 900; }
 
 .footer-digital { 
-    font-size: 40px; 
+    font-size: 32px; 
     font-style: italic; 
     color: #333;
 }
 
-/* Ajuste para o Curpio caber se for uma frase longa */
+/* Bloco Curpio - Ajuste de escala */
 .footer-curpio { 
-    font-size: 85px; 
+    font-size: 55px; /* Reduzi de 85px para frases longas como "AMANHÃ NÃO HÁ" */
 }
