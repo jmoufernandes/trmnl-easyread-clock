@@ -8,39 +8,40 @@ body {
     height: 100vh;
     margin: 0;
     text-align: center;
+    overflow: hidden; /* Impede barras de scroll no TRMNL */
 }
 
 .container {
-    width: 95%;
+    width: 98vw; /* Usa 98% da largura do ecrã */
 }
 
-/* 1ª Frase: Garrafal, Negrito e Sublinhada */
+/* 1ª Frase: Ocupa o topo com grande destaque */
 .segmento {
-    font-size: 80px; /* Muito grande */
+    font-size: 110px; /* Aumentado de 80 para 110 */
     font-weight: 900;
     text-decoration: underline;
     text-transform: uppercase;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    line-height: 1;
+}
+
+/* 2ª Frase: O coração do relógio */
+.frase {
+    font-size: 65px; /* Aumentado de 45 para 65 */
+    font-weight: normal;
+    text-transform: uppercase;
+    margin-bottom: 30px;
     line-height: 1.1;
 }
 
-/* 2ª Frase: Tamanho intermédio */
-.frase {
-    font-size: 45px;
-    font-weight: normal;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-    line-height: 1.2;
-}
-
-/* Classe auxiliar para o negrito dentro da 2ª frase */
 .negrito {
     font-weight: 900;
 }
 
-/* 3ª Frase: Pequena e Itálico */
+/* 3ª Frase: Fica na base, visível mas discreta */
 .digital {
-    font-size: 24px;
+    font-size: 35px; /* Aumentado de 24 para 35 */
     font-style: italic;
     font-weight: normal;
+    opacity: 0.8;
 }
