@@ -65,32 +65,42 @@ async function atualizar() {
     }
     document.getElementById("status-curpio").innerText = msgCurpio;
 
-    // --- 3. LÓGICA RELÓGIO DE TEXTO (CENTRO) ---
+// --- 3. LÓGICA RELÓGIO DE TEXTO (CENTRO) - RIGOROSA À TUA TABELA ---
     let hAlvo = (min >= 53) ? (h24 + 1) % 24 : h24;
-    let prefixo = (min >= 58 || min <= 2) ? "CERCA " : "QUASE ";
+    let prefixo = "";
     let sufMin = "";
 
-    if (min > 2 && min <= 12) { sufMin = " E DEZ"; }
-    else if (min > 12 && min <= 22) { sufMin = " E VINTE"; }
-    else if (min > 22 && min <= 32) { sufMin = " E MEIA"; }
-    else if (min > 32 && min <= 42) { sufMin = " E QUARENTA"; }
-    else if (min > 42 && min <= 52) { sufMin = " E CINQUENTA"; }
+    // Esta parte traduz a tua tabela de 5 em 5 minutos
+    if (min >= 58 || min <= 2) { 
+        prefixo = "CERCA "; 
+        sufMin = ""; 
+    } 
+    else if (min >= 3 && min <= 7)   { prefixo = "QUASE "; sufMin = " E DEZ"; }
+    else if (min >= 8 && min <= 12)  { prefixo = "CERCA "; sufMin = " E DEZ"; }
+    else if (min >= 13 && min <= 17) { prefixo = "QUASE "; sufMin = " E VINTE"; }
+    else if (min >= 18 && min <= 22) { prefixo = "CERCA "; sufMin = " E VINTE"; }
+    else if (min >= 23 && min <= 27) { prefixo = "QUASE "; sufMin = " E MEIA"; }
+    else if (min >= 28 && min <= 32) { prefixo = "CERCA "; sufMin = " E MEIA"; }
+    else if (min >= 33 && min <= 37) { prefixo = "QUASE "; sufMin = " E QUARENTA"; }
+    else if (min >= 38 && min <= 42) { prefixo = "CERCA "; sufMin = " E QUARENTA"; }
+    else if (min >= 43 && min <= 47) { prefixo = "QUASE "; sufMin = " E CINQUENTA"; }
+    else if (min >= 48 && min <= 52) { prefixo = "CERCA "; sufMin = " E CINQUENTA"; }
+    else if (min >= 53 && min <= 57) { prefixo = "QUASE "; sufMin = ""; }
 
     const nomes = ["MEIA-NOITE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE", "MEIO-DIA", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"];
     let conector = (hAlvo === 0 || hAlvo === 1 || hAlvo === 12 || hAlvo === 13) ? "DA " : "DAS ";
     let destaque = `${nomes[hAlvo]}${sufMin}`;
     
+    // Adiciona o período do dia (Manhã, Tarde, Noite) apenas nas horas exatas
     if (sufMin === "" && hAlvo !== 0 && hAlvo !== 12) {
         let p = (hAlvo >= 4 && hAlvo < 7) ? " DA MADRUGADA" : (hAlvo >= 7 && hAlvo < 13) ? " DA MANHÃ" : (hAlvo >= 13 && h24 < 20) ? " DA TARDE" : " DA NOITE";
         destaque += p;
     }
 
-  // --- MONTAGEM FINAL DO TEXTO CENTRAL ---
+    // Montagem final com a regra do "QUASE" sem conector
     if (prefixo === "QUASE ") {
-        // Se for QUASE, ignora o conector "DA/DAS"
         document.getElementById("frase-principal").innerHTML = `QUASE <span class="negrito">${destaque}</span>`;
     } else {
-        // Se for CERCA, mantém o conector "DA/DAS"
         document.getElementById("frase-principal").innerHTML = `CERCA ${conector}<span class="negrito">${destaque}</span>`;
     }
     
