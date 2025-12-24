@@ -85,7 +85,14 @@ async function atualizar() {
         destaque += p;
     }
 
-    document.getElementById("frase-principal").innerHTML = `${prefixo}${conector}<span class="negrito">${destaque}</span>`;
+  // --- MONTAGEM FINAL DO TEXTO CENTRAL ---
+    if (prefixo === "QUASE ") {
+        // Se for QUASE, ignora o conector "DA/DAS"
+        document.getElementById("frase-principal").innerHTML = `QUASE <span class="negrito">${destaque}</span>`;
+    } else {
+        // Se for CERCA, mantém o conector "DA/DAS"
+        document.getElementById("frase-principal").innerHTML = `CERCA ${conector}<span class="negrito">${destaque}</span>`;
+    }
     
     // --- 4. HORA DIGITAL ---
     document.getElementById("digital").innerText = `ou seja, são ${h24.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
