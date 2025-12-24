@@ -27,12 +27,14 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 65px; /* Tamanho garrafal para o período e Curpio */
+    /* Reduzi para 54px para garantir que a frase da madrugada cabe numa linha */
+    font-size: 54px; 
     font-weight: 900;
     text-transform: uppercase;
     text-align: center;
-    padding: 15px;
+    padding: 10px 20px; 
     line-height: 1.1;
+    overflow: hidden;
 }
 
 /* Área Central Branca */
