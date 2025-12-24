@@ -6,7 +6,7 @@ async function carregarFeriados() {
         const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${ano}/PT`);
         const dados = await response.json();
         feriadosPT = dados.map(f => f.date); 
-        feriadosPT.push(`${ano}-11-19`); 
+        feriadosPT.push(`${ano}-11-19`); // Feriado de Odivelas
     } catch (e) {
         console.error("Erro ao carregar feriados");
     }
@@ -16,6 +16,7 @@ async function atualizar() {
     const agora = new Date();
     const h24 = agora.getHours();
     const min = agora.getMinutes();
+    const totalMinutos = (h24 * 60) + min; 
     
     const formatar = (d) => {
         const z = n => n.toString().padStart(2, '0');
@@ -32,6 +33,25 @@ async function atualizar() {
     const hojeTem = !isDiaLivre(agora);
     const amanhaTem = !isDiaLivre(amanha);
 
+    // --- 1. LÓGICA DO TOPO (A sua nova tabela de horários) ---
+    let seg = "";
+    if (hojeTem) {
+        // Dias com Curpio
+        if (totalMinutos >= 490 && totalMinutos <= 540) { seg = "É HORA DE ACORDAR"; }
+        else if (totalMinutos > 540 && totalMinutos <= 779) { seg = "É DE MANHÃ"; }
+        else if (totalMinutos >= 780 && totalMinutos <= 1199) { seg = "É DE TARDE"; }
+        else if (totalMinutos >= 1200 && totalMinutos <= 1290) { seg = "É DE NOITE 🌙"; }
+        else { seg = "É HORA DE DORMIR 🌙"; }
+    } else {
+        // Dias sem Curpio (Fim de semana/Feriados)
+        if (totalMinutos >= 480 && totalMinutos <= 779) { seg = "É DE MANHÃ"; }
+        else if (totalMinutos >= 780 && totalMinutos <= 1199) { seg = "É DE TARDE"; }
+        else if (totalMinutos >= 1200 && totalMinutos <= 1290) { seg = "É DE NOITE 🌙"; }
+        else { seg = "É HORA DE DORMIR 🌙"; }
+    }
+    document.getElementById("segmento").innerText = seg;
+
+    // --- 2. LÓGICA DO CURPIO (FUNDO) ---
     let msgCurpio = "";
     if (h24 >= 3 && h24 < 7) {
         msgCurpio = hojeTem ? "LOGO HÁ CURPIO" : "HOJE NÃO HÁ CURPIO";
@@ -42,9 +62,7 @@ async function atualizar() {
     }
     document.getElementById("status-curpio").innerText = msgCurpio;
 
-    let seg = (h24 >= 4 && h24 < 7) ? "É DE MADRUGADA" : (h24 >= 7 && h24 < 13) ? "É DE MANHÃ" : (h24 >= 13 && h24 < 20) ? "É DE TARDE" : "É DE NOITE";
-    document.getElementById("segmento").innerText = seg;
-
+    // --- 3. LÓGICA RELÓGIO DE TEXTO (CENTRO) ---
     let hAlvo = (min >= 53) ? (h24 + 1) % 24 : h24;
     let prefixo = "", sufMin = "";
 
@@ -64,7 +82,6 @@ async function atualizar() {
     const nomes = ["MEIA-NOITE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE", "MEIO-DIA", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"];
     let conector = (hAlvo === 0 || hAlvo === 1 || hAlvo === 12 || hAlvo === 13) ? "DA " : "DAS ";
     
-    // --- MUDANÇA AQUI: O prefixo fica fora do <span> de negrito ---
     let destaque = `${nomes[hAlvo]}${sufMin}`;
     
     if (sufMin === "" && hAlvo !== 0 && hAlvo !== 12) {
@@ -72,14 +89,11 @@ async function atualizar() {
         destaque += p;
     }
 
-    let finalHTML = "";
-    if (prefixo === "QUASE ") {
-        finalHTML = `QUASE <span class="negrito">${destaque}</span>`;
-    } else {
-        finalHTML = `CERCA ${conector}<span class="negrito">${destaque}</span>`;
-    }
+    let finalHTML = (prefixo === "QUASE ") ? `QUASE <span class="negrito">${destaque}</span>` : `CERCA ${conector}<span class="negrito">${destaque}</span>`;
 
     document.getElementById("frase-principal").innerHTML = finalHTML;
+    
+    // --- 4. HORA DIGITAL ---
     const hDig = h24.toString().padStart(2, '0');
     const mDig = min.toString().padStart(2, '0');
     document.getElementById("digital").innerText = `ou seja, são ${hDig}:${mDig}`;
@@ -87,5 +101,5 @@ async function atualizar() {
 
 carregarFeriados().then(() => {
     atualizar();
-    setInterval(atualizar, 1000);
+    setInterval(atualizar, 30000); // Atualiza a cada 30 segundos
 });
