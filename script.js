@@ -6,7 +6,7 @@ async function carregarFeriados() {
         const response = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${ano}/PT`);
         const dados = await response.json();
         feriadosPT = dados.map(f => f.date); 
-        feriadosPT.push(`${ano}-11-19`); // Feriado de Odivelas
+        feriadosPT.push(`${ano}-11-19`); 
     } catch (e) {
         console.error("Erro ao carregar feriados");
     }
@@ -33,22 +33,25 @@ async function atualizar() {
     const hojeTem = !isDiaLivre(agora);
     const amanhaTem = !isDiaLivre(amanha);
 
-    // --- 1. LÓGICA DO TOPO (A sua nova tabela de horários) ---
+    // --- 1. LÓGICA DO TOPO (A TUA TABELA EXATA) ---
     let seg = "";
-    if (hojeTem) {
-        // Dias com Curpio
-        if (totalMinutos >= 490 && totalMinutos <= 540) { seg = "É HORA DE ACORDAR"; }
-        else if (totalMinutos > 540 && totalMinutos <= 779) { seg = "É DE MANHÃ"; }
-        else if (totalMinutos >= 780 && totalMinutos <= 1199) { seg = "É DE TARDE"; }
-        else if (totalMinutos >= 1200 && totalMinutos <= 1290) { seg = "É DE NOITE 🌙"; }
-        else { seg = "É HORA DE DORMIR 🌙"; }
-    } else {
-        // Dias sem Curpio (Fim de semana/Feriados)
-        if (totalMinutos >= 480 && totalMinutos <= 779) { seg = "É DE MANHÃ"; }
-        else if (totalMinutos >= 780 && totalMinutos <= 1199) { seg = "É DE TARDE"; }
-        else if (totalMinutos >= 1200 && totalMinutos <= 1290) { seg = "É DE NOITE 🌙"; }
-        else { seg = "É HORA DE DORMIR 🌙"; }
+    
+    // Regra Comum para Noite e Madrugada (Igual em todos os dias)
+    if (totalMinutos >= 1291 || totalMinutos <= 239) { seg = "É HORA DE DORMIR 🌙"; } // 21:31 > 03:59
+    else if (totalMinutos >= 240 && totalMinutos <= 489) { seg = "MADRUGADA - DORMIR MAIS 🌙"; } // 04:00 > 08:09
+    
+    // Regra Específica para a Manhã (Depende do Curpio)
+    else if (totalMinutos >= 490 && totalMinutos <= 540) { // 08:10 > 09:00
+        seg = hojeTem ? "É HORA DE ACORDAR" : "É DE MANHÃ"; 
     }
+    
+    // Regra Comum para o resto do dia
+    else if (totalMinutos >= 541 && totalMinutos <= 720) { seg = "É DE MANHÃ"; } // 09:01 > 12:00
+    else if (totalMinutos >= 721 && totalMinutos <= 839) { seg = "É HORA DE ALMOÇO"; } // 12:01 > 13:59
+    else if (totalMinutos >= 840 && totalMinutos <= 1140) { seg = "É DE TARDE"; } // 14:00 > 19:00
+    else if (totalMinutos >= 1141 && totalMinutos <= 1230) { seg = "É HORA DE JANTAR"; } // 19:01 > 20:30
+    else if (totalMinutos >= 1231 && totalMinutos <= 1290) { seg = "É DE NOITE 🌙"; } // 20:31 > 21:30
+
     document.getElementById("segmento").innerText = seg;
 
     // --- 2. LÓGICA DO CURPIO (FUNDO) ---
@@ -64,24 +67,17 @@ async function atualizar() {
 
     // --- 3. LÓGICA RELÓGIO DE TEXTO (CENTRO) ---
     let hAlvo = (min >= 53) ? (h24 + 1) % 24 : h24;
-    let prefixo = "", sufMin = "";
+    let prefixo = (min >= 58 || min <= 2) ? "CERCA " : "QUASE ";
+    let sufMin = "";
 
-    if (min >= 58 || min <= 2) { prefixo = "CERCA "; }
-    else if (min <= 7) { prefixo = "QUASE "; sufMin = " E DEZ"; }
-    else if (min <= 12) { prefixo = "CERCA "; sufMin = " E DEZ"; }
-    else if (min <= 17) { prefixo = "QUASE "; sufMin = " E VINTE"; }
-    else if (min <= 22) { prefixo = "CERCA "; sufMin = " E VINTE"; }
-    else if (min <= 27) { prefixo = "QUASE "; sufMin = " E MEIA"; }
-    else if (min <= 32) { prefixo = "CERCA "; sufMin = " E MEIA"; }
-    else if (min <= 37) { prefixo = "QUASE "; sufMin = " E QUARENTA"; }
-    else if (min <= 42) { prefixo = "CERCA "; sufMin = " E QUARENTA"; }
-    else if (min <= 47) { prefixo = "QUASE "; sufMin = " E CINQUENTA"; }
-    else if (min <= 52) { prefixo = "CERCA "; sufMin = " E CINQUENTA"; }
-    else { prefixo = "QUASE "; }
+    if (min > 2 && min <= 12) { sufMin = " E DEZ"; }
+    else if (min > 12 && min <= 22) { sufMin = " E VINTE"; }
+    else if (min > 22 && min <= 32) { sufMin = " E MEIA"; }
+    else if (min > 32 && min <= 42) { sufMin = " E QUARENTA"; }
+    else if (min > 42 && min <= 52) { sufMin = " E CINQUENTA"; }
 
     const nomes = ["MEIA-NOITE", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE", "MEIO-DIA", "UMA", "DUAS", "TRÊS", "QUATRO", "CINCO", "SEIS", "SETE", "OITO", "NOVE", "DEZ", "ONZE"];
     let conector = (hAlvo === 0 || hAlvo === 1 || hAlvo === 12 || hAlvo === 13) ? "DA " : "DAS ";
-    
     let destaque = `${nomes[hAlvo]}${sufMin}`;
     
     if (sufMin === "" && hAlvo !== 0 && hAlvo !== 12) {
@@ -89,17 +85,13 @@ async function atualizar() {
         destaque += p;
     }
 
-    let finalHTML = (prefixo === "QUASE ") ? `QUASE <span class="negrito">${destaque}</span>` : `CERCA ${conector}<span class="negrito">${destaque}</span>`;
-
-    document.getElementById("frase-principal").innerHTML = finalHTML;
+    document.getElementById("frase-principal").innerHTML = `${prefixo}${conector}<span class="negrito">${destaque}</span>`;
     
     // --- 4. HORA DIGITAL ---
-    const hDig = h24.toString().padStart(2, '0');
-    const mDig = min.toString().padStart(2, '0');
-    document.getElementById("digital").innerText = `ou seja, são ${hDig}:${mDig}`;
+    document.getElementById("digital").innerText = `ou seja, são ${h24.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
 }
 
 carregarFeriados().then(() => {
     atualizar();
-    setInterval(atualizar, 30000); // Atualiza a cada 30 segundos
+    setInterval(atualizar, 30000); 
 });
