@@ -13,7 +13,7 @@ async function carregarFeriados() {
 }
 
 async function atualizar() {
-    const agora = new Date('2025-12-23T20:45:00')
+    const agora = new Date();
     const h24 = agora.getHours();
     const min = agora.getMinutes();
     const totalMinutos = (h24 * 60) + min; 
