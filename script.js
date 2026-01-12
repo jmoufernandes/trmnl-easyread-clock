@@ -104,8 +104,7 @@ async function atualizar() {
         document.getElementById("frase-principal").innerHTML = `CERCA ${conector}<span class="negrito">${destaque}</span>`;
     }
     
-    // --- 4. HORA DIGITAL ---
-    document.getElementById("digital").innerText = `ou seja, são ${h24.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+
 }
 
 // --- INICIALIZAÇÃO IMEDIATA (PARA O TRMNL NÃO VER BRANCO) ---
