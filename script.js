@@ -108,7 +108,11 @@ async function atualizar() {
     document.getElementById("digital").innerText = `ou seja, são ${h24.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
 }
 
+// --- INICIALIZAÇÃO IMEDIATA (PARA O TRMNL NÃO VER BRANCO) ---
+atualizar(); 
+
 carregarFeriados().then(() => {
-    atualizar();
-    setInterval(atualizar, 30000); 
+    atualizar(); 
 });
+
+setInterval(atualizar, 30000);
